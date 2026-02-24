@@ -1,0 +1,9 @@
+{
+    "package": "AnkiDiscord",
+    "name": "AnkiDiscord - Discord Rich Presence",
+    "author": "Monacraft",
+    "version": "2.1",
+    "homepage": "https://github.com/Monacraft/AnkiDiscord",
+    "conflicts": [],
+    "mod": 0
+}

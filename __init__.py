@@ -191,6 +191,8 @@ class DiscordRichPresence:
         """Clean up Discord connection"""
         if self.rpc and self.connected:
             try:
+                self.rpc.clear() # Clears discord presence before closing the connection
+                time.sleep(0.5)
                 self.rpc.close()
             except:
                 pass
