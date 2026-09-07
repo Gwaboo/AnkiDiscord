@@ -28,20 +28,24 @@ def get_ipc_path(pipe=None):
         ipc = f"{ipc}{pipe}"
 
     if sys.platform in ('linux', 'darwin'):
-        tempdir = (os.environ.get('XDG_RUNTIME_DIR') or tempfile.gettempdir())
+        tempdirs = [os.environ.get('XDG_RUNTIME_DIR') or tempfile.gettempdir()]
+        if sys.platform == 'linux':
+            # Vanilla Discord (non-snap/flatpak) keeps its IPC socket in $TMPDIR (e.g. /tmp)
+            tempdirs.append(tempfile.gettempdir())
         paths = ['.', 'snap.discord', 'app/com.discordapp.Discord', 'app/com.discordapp.DiscordCanary']
     elif sys.platform == 'win32':
-        tempdir = r'\\?\pipe'
+        tempdirs = [r'\\?\pipe']
         paths = ['.']
     else:
         return
-    
-    for path in paths:
-        full_path = os.path.abspath(os.path.join(tempdir, path))
-        if sys.platform == 'win32' or os.path.isdir(full_path):
-            for entry in os.scandir(full_path):
-                if entry.name.startswith(ipc) and os.path.exists(entry):
-                    return entry.path
+
+    for tempdir in tempdirs:
+        for path in paths:
+            full_path = os.path.abspath(os.path.join(tempdir, path))
+            if sys.platform == 'win32' or os.path.isdir(full_path):
+                for entry in os.scandir(full_path):
+                    if entry.name.startswith(ipc) and os.path.exists(entry):
+                        return entry.path
 
 
 def get_event_loop(force_fresh=False):
